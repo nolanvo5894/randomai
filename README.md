@@ -39,12 +39,13 @@ RandomAI is an AI-powered story generation and publishing platform that transfor
    - Creates audio narration
 
 ## 🚀 Getting Started
+- Online: I am trying to deploy this on Streamlit Community Cloud, but after a first successful deploy it now is taking too long in the 'oven' for a restart. The link is (here)[https://randomaipublish.streamlit.app/]
 - Locally: clone the app on your machine. create a virtual env, for example with conda. then install the neccasary packages with
   ```bash
-  pip install -r requirements.txt```
+  pip install -r requirements.txt
 after that, please put in API keys for NVIDIA NIM, Tavily, and OpenAI into .env file
 finally, to run the app
    ```bash
-  streamlit run app.py```
+  streamlit run app.py
 
-- Online: I am trying to deploy this on Streamlit Community Cloud, but after a first successful deploy it now is taking too long in the 'oven' for a restart. The link is (here)[https://randomaipublish.streamlit.app/]
+
