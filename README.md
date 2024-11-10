@@ -39,13 +39,14 @@ RandomAI is an AI-powered story generation and publishing platform that transfor
    - Creates audio narration
 
 ## 🚀 Getting Started
-
-- Locally: clone the app on your machine. create a virtual env, for example with conda. then install the neccasary packages with
+Locally: clone the app on your machine. create a virtual env, for example with conda. then install the neccasary packages with
   ```bash
       pip install -r requirements.txt
+  ```
 after that, please put in API keys for NVIDIA NIM, Tavily, and OpenAI into .env file
 finally, to run the app
   ```bash
       streamlit run app.py
+  ```
 
 
