@@ -21,7 +21,10 @@ import requests
 import base64
 import json
 
-load_dotenv()
+os.environ["TAVILY_API_KEY"] = st.secrets["TAVILY_API_KEY"]
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+os.environ["NVIDIA_API_KEY"] = st.secrets["NVIDIA_API_KEY"]
+
 
 # Function to download image from a URL
 def download_image(url, save_path):
