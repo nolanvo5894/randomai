@@ -1,0 +1,10 @@
+streamlit
+llama-index
+llama-index-llms-openai
+llama-index-llms-ollama
+llama-index-llms-nvidia
+tavily-python
+python-dotenv
+openai
+requests
+pydantic 
