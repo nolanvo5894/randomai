@@ -202,7 +202,7 @@ class StoryPublicationFlow(Workflow):
         
         if persona == 'translator':
             llm = NVIDIA(model = 'meta/llama-3.1-405b-instruct')
-            response = await llm.acomplete(f'''you are a veteran English to Japanese translator for short stories. here is a short story about {topic}: {story}.
+            response = await llm.acomplete(f'''you are a veteran English to Chinese translator for short stories. here is a short story about {topic}: {story}.
                                            read it carefully and then translate it into Japanese, be thoughtful about the nuances of the languages. write in md syntax. your translation:''')
             
             with open('publication/translation.md', 'w', encoding='utf-8') as f:
