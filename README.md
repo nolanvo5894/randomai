@@ -43,7 +43,8 @@ Locally: clone the app on your machine. create a virtual env, for example with c
   ```bash
       pip install -r requirements.txt
   ```
-after that, please put in API keys for NVIDIA NIM, Tavily, and OpenAI into .env file
+after that, please create a .env file and put in API keys for NVIDIA NIM, Tavily, and OpenAI
+
 finally, to run the app
   ```bash
       streamlit run app.py
