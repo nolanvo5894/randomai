@@ -21,10 +21,7 @@ import requests
 import base64
 import json
 
-os.environ["TAVILY_API_KEY"] = st.secrets["TAVILY_API_KEY"]
-os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
-os.environ["NVIDIA_API_KEY"] = st.secrets["NVIDIA_API_KEY"]
-
+load_dotenv()
 
 # Function to download image from a URL
 def download_image(url, save_path):
@@ -88,7 +85,7 @@ class StoryPublicationFlow(Workflow):
     @step
     async def research_source_materials(self, ctx: Context, ev: StartEvent) -> SubtopicPackage: 
         topic = ev.query
-        print(topic)
+        print(f'topic: {topic}')
         await ctx.set('topic', topic)
 
         tavily_client = TavilyClient()
@@ -102,7 +99,7 @@ class StoryPublicationFlow(Workflow):
         response = sllm.chat([input_msg])
         
         subtopics = json.loads(response.message.content)
-        print(subtopics)
+        print(f'subtopics: {subtopics}')
         
         await ctx.set('subtopics', subtopics)
         await ctx.set('num_subtopics', len(subtopics))
@@ -112,7 +109,7 @@ class StoryPublicationFlow(Workflow):
     @step(num_workers=3)
     async def research_subtopics(self, ctx: Context, ev: SubtopicPackage) -> SubtopicSourceMaterialPackage:
         subtopic = ev.subtopic
-        print(subtopic)
+        #print(subtopic)
         tavily_client = TavilyClient()
         response = tavily_client.search(subtopic)
         subtopic_materials = '\n'.join(result['content'] for result in response['results'])
@@ -136,7 +133,7 @@ class StoryPublicationFlow(Workflow):
             print('writing story')
             topic = await ctx.get('topic')
             source_materials = ev.source_materials
-            print(source_materials)
+            # print(source_materials)
             llm = NVIDIA(model = 'meta/llama-3.1-8b-instruct')
             response = await llm.acomplete(f'''you are a world famous fiction writer of scifi short stories. 
                                         you are tasked with writing a super short story about {topic}.
@@ -149,14 +146,14 @@ class StoryPublicationFlow(Workflow):
             topic = await ctx.get('topic')
             editor_commentary = ev.editor_commentary
             draft_story = await ctx.get('draft_story')
-            llm = NVIDIA(model = 'meta/llama-3.1-8b-instruct')
+            llm = NVIDIA(model = 'meta/llama-3.1-405b-instruct')
             response = await llm.acomplete(f'''you are a world famous fiction writer of scifi short stories. 
                                         you are tasked with writing a super short story about {topic}.
                                         
                                         
                                         here is a draft of the story you wrote: {draft_story}
                                         here is the commentary from the editor: {editor_commentary}
-                                        refine it to make it more engaging and interesting''')
+                                        refine it to make it more engaging and interesting. your refined story, only put the story, NO other commentary:''')
             with open('publication/final_story.md', 'w', encoding='utf-8') as f:
                 f.write(str(response))
             return FinalStoryPackage(final_story = str(response))
@@ -201,7 +198,7 @@ class StoryPublicationFlow(Workflow):
             return PersonaCommentaryPackage(commentary = 'teaser done')
         
         if persona == 'translator':
-            llm = NVIDIA(model = 'meta/llama-3.1-8b-instruct')
+            llm = NVIDIA(model = 'meta/llama-3.1-405b-instruct')
             response = await llm.acomplete(f'''you are a veteran English to Japanese translator for short stories. here is a short story about {topic}: {story}.
                                            read it carefully and then translate it into Japanese, be thoughtful about the nuances of the languages. write in md syntax. your translation:''')
             
@@ -257,14 +254,14 @@ class StoryPublicationFlow(Workflow):
         return StopEvent(result = 'all done')
 
 async def generate_story(topic):
-    # Create publication directory if it doesn't exist
+    # create publication directory if it doesn't exist
     os.makedirs('publication', exist_ok=True)
     
     w = StoryPublicationFlow(timeout=10000, verbose=False)
     return await w.run(query=topic)
 
 def main():
-    st.title("RandomAI - The AI Publishing House")
+    st.title("RandomAI - The AI Publishing House 🔖")
     
     # Input section
     topic = st.text_input("What topic do you want to write a short story about?")
@@ -275,33 +272,29 @@ def main():
             result = asyncio.run(generate_story(topic))
             
             # Display the results in tabs
-            tab1, tab2, tab3, tab4, tab5 = st.tabs(["Story", "Review", "Teaser", "Translation", "Media"])
+            tab1, tab2, tab3, tab4 = st.tabs(["Story", "Teaser", "Translation", "Media"])
             
             with tab1:
                 st.header("Generated Story")
-                story_content = read_markdown_file('publication/story.md')
+                story_content = read_markdown_file('publication/final_story.md')
                 if story_content:
                     st.markdown(story_content)
             
-            with tab2:
-                st.header("Editor's Review")
-                review_content = read_markdown_file('publication/review.md')
-                if review_content:
-                    st.markdown(review_content)
             
-            with tab3:
+            
+            with tab2:
                 st.header("Story Teaser")
                 teaser_content = read_markdown_file('publication/teaser.md')
                 if teaser_content:
                     st.markdown(teaser_content)
             
-            with tab4:
-                st.header("Japanese Translation")
+            with tab3:
+                st.header("Translation")
                 translation_content = read_markdown_file('publication/translation.md')
                 if translation_content:
                     st.markdown(translation_content)
             
-            with tab5:
+            with tab4:
                 st.header("Story Illustration")
                 if os.path.exists('publication/story_illustration.jpg'):
                     st.image('publication/story_illustration.jpg')
