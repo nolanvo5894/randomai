@@ -37,6 +37,8 @@ RandomAI is an AI-powered story generation and publishing platform that transfor
    - Translates to Japanese
    - Generates illustration
    - Creates audio narration
+  
+![Flow Diagram](storyflow.webp) 
 
 ## 🚀 Getting Started
 Locally: clone the app on your machine. create a virtual env, for example with conda. then install the neccasary packages with
