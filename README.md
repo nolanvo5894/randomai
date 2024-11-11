@@ -51,5 +51,4 @@ finally, to run the app
   ```bash
       streamlit run app.py
   ```
-
-
+Some sample artifacts are inside the publication folder.
